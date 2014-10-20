@@ -1,0 +1,11 @@
+application: heni
+
+dispatch:
+  - url: "*/web/*"
+    module: default
+
+  - url: "*/manager/*"
+    module: manager
+
+  - url: "*/"
+    module: default
