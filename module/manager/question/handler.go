@@ -7,7 +7,6 @@ import (
 	"strconv"
 
 	"github.com/czertbytes/heni/pkg/httputil"
-	"github.com/czertbytes/heni/pkg/questions"
 	"github.com/czertbytes/heni/pkg/types"
 
 	"github.com/julienschmidt/httprouter"
@@ -17,13 +16,13 @@ func Post(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	aeContext := appengine.NewContext(r)
 
 	var question types.Question
-	if httpErr := httputil.ParseBody(r, &question); httpErr != nil {
-		httputil.ResponseError(w, httpErr)
+	if err := httputil.ParseBody(r, &question); err != nil {
+		httputil.ResponseError(w, err)
 		return
 	}
 
-	if _, httpErr := questions.NewQuestions(aeContext).Put(&question); httpErr != nil {
-		httputil.ResponseError(w, httpErr)
+	if err := create(aeContext, &question); err != nil {
+		httputil.ResponseError(w, err)
 		return
 	}
 
@@ -33,17 +32,17 @@ func Post(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 func Get(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	aeContext := appengine.NewContext(r)
 
-	questionIdStr := ps.ByName("questionId")
+	questionIdStr := ps.ByName("id")
 	questionId, err := strconv.ParseInt(questionIdStr, 10, 64)
 	if err != nil {
-		httpErr := httputil.BadRequest("Parsing request failed", err.Error(), err)
-		httputil.ResponseError(w, httpErr)
+		err2 := httputil.BadRequest("Parsing request failed", err.Error(), err)
+		httputil.ResponseError(w, err2)
 		return
 	}
 
-	question, httpErr := questions.NewQuestions(aeContext).Find(types.QuestionId(questionId))
-	if httpErr != nil {
-		httputil.ResponseError(w, httpErr)
+	question, err := find(aeContext, types.QuestionId(questionId))
+	if err != nil {
+		httputil.ResponseError(w, err)
 		return
 	}
 
@@ -59,5 +58,9 @@ func Patch(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 }
 
 func Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	log.Println("Manager question")
+}
+
+func GetQuiz(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	log.Println("Manager question")
 }

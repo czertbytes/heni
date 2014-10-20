@@ -27,3 +27,11 @@ func Patch(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 func Delete(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	log.Println("Manager quiz")
 }
+
+func GetQuestions(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	log.Println("Manager quiz")
+}
+
+func PostCheck(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	log.Println("Manager QuizCheck")
+}
